@@ -128,8 +128,9 @@ module GraphQL
       # @param camelize [Boolean] If true, the field name will be camelized when building the schema
       # @param complexity [Numeric] When provided, set the complexity for this field
       # @param scope [Boolean] If true, the return type's `.scope_items` method will be called on the return value
+      # @param graphql_name [String] The custom graphql name of this field
       # @param subscription_scope [Symbol, String] A key in `context` which will be used to scope subscription payloads
-      def initialize(type: nil, name: nil, owner: nil, null: nil, field: nil, function: nil, description: nil, deprecation_reason: nil, method: nil, connection: nil, max_page_size: nil, scope: nil, resolve: nil, introspection: false, hash_key: nil, camelize: true, trace: nil, complexity: 1, extras: [], resolver_class: nil, subscription_scope: nil, arguments: {}, &definition_block)
+      def initialize(type: nil, name: nil, owner: nil, null: nil, field: nil, function: nil, description: nil, deprecation_reason: nil, method: nil, connection: nil, max_page_size: nil, scope: nil, resolve: nil, introspection: false, hash_key: nil, camelize: true, trace: nil, complexity: 1, extras: [], resolver_class: nil, subscription_scope: nil, graphql_name: nil, arguments: {}, &definition_block)
 
         if name.nil?
           raise ArgumentError, "missing first `name` argument or keyword `name:`"
@@ -146,7 +147,7 @@ module GraphQL
           raise ArgumentError, "keyword `extras:` may only be used with method-based resolve and class-based field such as mutation class, please remove `field:`, `function:` or `resolve:`"
         end
         @original_name = name
-        @name = camelize ? Member::BuildType.camelize(name.to_s) : name.to_s
+        @name = graphql_name ? graphql_name : (camelize ? Member::BuildType.camelize(name.to_s) : name.to_s)
         @description = description
         if field.is_a?(GraphQL::Schema::Field)
           @field_instance = field
